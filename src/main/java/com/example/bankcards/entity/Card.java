@@ -34,8 +34,4 @@ public class Card {
 
     @Column(nullable = false)
     private BigDecimal balance;
-
-    public String getMaskedCardNumber() {
-        return "**** **** **** " + cardNumber.substring(12);
-    }
 }
