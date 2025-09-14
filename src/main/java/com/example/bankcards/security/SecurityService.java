@@ -1,6 +1,10 @@
 package com.example.bankcards.security;
 
-import com.example.bankcards.dto.*;
+import com.example.bankcards.dto.auth.AuthResponse;
+import com.example.bankcards.dto.auth.LoginRequest;
+import com.example.bankcards.dto.auth.RefreshTokenRequest;
+import com.example.bankcards.dto.auth.RefreshTokenResponse;
+import com.example.bankcards.dto.user.UserRequest;
 import com.example.bankcards.entity.RefreshToken;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.RefreshTokenException;

@@ -1,9 +1,10 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.auth.*;
+import com.example.bankcards.dto.user.UserRequest;
 import com.example.bankcards.exception.AlreadyExistsException;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.security.SecurityService;
-import com.example.bankcards.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,12 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final UserRepository userRepository;
-
     private final SecurityService securityService;
 
     @PostMapping("/sign-in")
@@ -36,7 +36,6 @@ public class AuthController {
         if (userRepository.existsByEmail(userRequest.getEmail())) {
             throw new AlreadyExistsException("Email already exists");
         }
-
         securityService.register(userRequest);
 
         return ResponseEntity.ok(new SimpleResponse("User registered successfully"));
@@ -50,7 +49,6 @@ public class AuthController {
     @PostMapping("/log-out")
     public ResponseEntity<SimpleResponse> logout(@AuthenticationPrincipal UserDetails userDetails) {
         securityService.logOut();
-
         return ResponseEntity.ok(new SimpleResponse("Logged out successfully, username: " + userDetails.getUsername()));
     }
 }
