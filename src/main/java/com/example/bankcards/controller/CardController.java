@@ -3,9 +3,11 @@ package com.example.bankcards.controller;
 import com.example.bankcards.dto.card.CardResponse;
 import com.example.bankcards.dto.card.CardStatusRequest;
 import com.example.bankcards.mapper.CardMapper;
+import com.example.bankcards.security.AppUserDetails;
 import com.example.bankcards.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,5 +48,11 @@ public class CardController {
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteById(@PathVariable Long id) {
         service.delete(id);
+    }
+
+    @GetMapping("/{id}/balance")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public CardResponse balance(@PathVariable Long id, @AuthenticationPrincipal AppUserDetails userDetails) {
+        return mapper.toCardResponse(service.getBalance(id, userDetails.getId()));
     }
 }

@@ -3,6 +3,7 @@ package com.example.bankcards.service;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
+import com.example.bankcards.exception.DifferentOwnerException;
 import com.example.bankcards.exception.EntityNotFoundException;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,13 +30,15 @@ public class CardService {
 
     public Card findById(Long id) {
         return cardRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Card not found with id: " + id)
+                () -> new EntityNotFoundException(
+                        MessageFormat.format("Card with ID: {0} not found", id))
         );
     }
 
     public Card create(Long userId) {
         User owner = userRepository.findById(userId).orElseThrow(
-                () -> new EntityNotFoundException("User not found with id: " + userId)
+                () -> new EntityNotFoundException(
+                        MessageFormat.format("User with ID: {0} not found", userId))
         );
         Card card = new Card();
         String cardNumber;
@@ -48,6 +52,16 @@ public class CardService {
         card.setBalance(BigDecimal.ZERO);
         card.setCardNumber(cardNumber);
         return cardRepository.save(card);
+    }
+
+    public Card getBalance(Long cardId, Long userId) {
+        Card card = findById(cardId);
+        if (card.getOwner().getId().equals(userId)) {
+            return card;
+        } else {
+            throw new DifferentOwnerException(
+                    MessageFormat.format("You are not owner of card with ID: {0}", cardId));
+        }
     }
 
     @Transactional
