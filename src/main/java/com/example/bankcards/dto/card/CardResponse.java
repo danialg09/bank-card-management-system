@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class CardResponse {
+    private Long id;
     private String cardNumber;
     private String ownerName;
     private String expirationDate;

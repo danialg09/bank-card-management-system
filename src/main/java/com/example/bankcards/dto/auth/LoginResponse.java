@@ -1,25 +1,21 @@
-package com.example.bankcards.dto.user;
+package com.example.bankcards.dto.auth;
 
-import com.example.bankcards.entity.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserRequest {
-
+public class LoginResponse {
+    private Long id;
+    private String token;
+    private String refreshToken;
     private String username;
-
     private String email;
-
-    private Set<RoleType> roles;
-
-    private String password;
-
+    private List<String> roles;
 }
