@@ -15,6 +15,7 @@ public interface CardMapper {
 
     @Mapping(source = "owner.username", target = "ownerName")
     @Mapping(target = "cardNumber", source = "cardNumber", qualifiedByName = "maskCardNumber")
+    @Mapping(target = "id", source = "id")
     CardResponse toCardResponse(Card card);
 
     List<CardResponse> toCardResponses(List<Card> cards);

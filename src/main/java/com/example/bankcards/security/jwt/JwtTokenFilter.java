@@ -24,7 +24,6 @@ import java.io.IOException;
 public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
-
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -35,7 +34,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 String username = jwtUtils.getUserName(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
@@ -45,7 +43,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e.getMessage());
         }
-
         filterChain.doFilter(request, response);
     }
 

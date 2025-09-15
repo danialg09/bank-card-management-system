@@ -17,7 +17,6 @@ public class JwtUtils {
     @Value("${app.jwt.secret}")
     private String secret;
 
-
     @Value("${app.jwt.tokenExpiration}")
     private Duration tokenExpiration;
 
@@ -60,5 +59,4 @@ public class JwtUtils {
         }
         return false;
     }
-
 }
