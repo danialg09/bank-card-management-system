@@ -14,18 +14,18 @@ spring:
     username: postgres
   liquibase:
     change-log: classpath:db/migration/db.changelog-master.yml
-    enabled: false
+    enabled: true
     drop-first: true
-  springdoc:
-    api-docs:
-      path: /api-docs
-      locations: file:./docs/openapi.yaml
-    swagger-ui:
-      path: /swagger-ui.html
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /docs/openapi.yaml
 app:
   jwt:
     secret: "someSecretKey"
-    tokenExpiration: 15s
-    refreshTokenExpiration: 1m
+    tokenExpiration: 50m
+    refreshTokenExpiration: 100m
 server:
   port: 8080
