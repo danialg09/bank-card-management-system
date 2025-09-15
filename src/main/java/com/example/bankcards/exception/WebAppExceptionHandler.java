@@ -24,6 +24,21 @@ public class WebAppExceptionHandler {
         return buildResponse(HttpStatus.NOT_FOUND, e, request);
     }
 
+    @ExceptionHandler(value = DifferentOwnerException.class)
+    public ResponseEntity<ErrorResponseBody> differentOwnerException(DifferentOwnerException e, WebRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e, request);
+    }
+
+    @ExceptionHandler(value = InsufficientFundsException.class)
+    public ResponseEntity<ErrorResponseBody> insufficientFundsException(InsufficientFundsException e, WebRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e, request);
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponseBody> illegalArguments(IllegalArgumentException e, WebRequest request) {
+        return buildResponse(HttpStatus.BAD_REQUEST, e, request);
+    }
+
     private ResponseEntity<ErrorResponseBody> buildResponse(HttpStatus httpStatus, Exception e, WebRequest request) {
         return ResponseEntity.status(httpStatus)
                 .body(ErrorResponseBody.builder()
@@ -31,6 +46,4 @@ public class WebAppExceptionHandler {
                         .description(request.getDescription(false))
                         .build());
     }
-
-
 }
