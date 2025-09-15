@@ -1,16 +1,16 @@
-package com.example.bankcards.security;
+package com.example.bankcards.service;
 
-import com.example.bankcards.dto.auth.AuthResponse;
+import com.example.bankcards.dto.auth.LoginResponse;
 import com.example.bankcards.dto.auth.LoginRequest;
 import com.example.bankcards.dto.auth.RefreshTokenRequest;
 import com.example.bankcards.dto.auth.RefreshTokenResponse;
-import com.example.bankcards.dto.user.UserRequest;
+import com.example.bankcards.dto.auth.RegisterRequest;
 import com.example.bankcards.entity.RefreshToken;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.exception.RefreshTokenException;
 import com.example.bankcards.repository.UserRepository;
+import com.example.bankcards.security.AppUserDetails;
 import com.example.bankcards.security.jwt.JwtUtils;
-import com.example.bankcards.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,23 +20,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SecurityService {
+public class AuthService {
 
     private final AuthenticationManager authenticationManager;
-
     private final JwtUtils jwtUtils;
-
     private final RefreshTokenService refreshTokenService;
-
     private final UserRepository userRepository;
-
     private final PasswordEncoder passwordEncoder;
 
-    public AuthResponse authenticate(LoginRequest request) {
+    public LoginResponse authenticate(LoginRequest request) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
 
@@ -50,7 +47,7 @@ public class SecurityService {
 
         RefreshToken refreshToken = refreshTokenService.save(userDetails.getId());
 
-        return AuthResponse.builder()
+        return LoginResponse.builder()
                 .id(userDetails.getId())
                 .username(userDetails.getUsername())
                 .token(jwtUtils.generateToken(userDetails))
@@ -60,15 +57,15 @@ public class SecurityService {
                 .build();
     }
 
-    public void register(UserRequest request) {
-       var user = User.builder()
-               .username(request.getUsername())
-               .email(request.getEmail())
-               .password(passwordEncoder.encode(request.getPassword()))
-               .build();
+    public void register(RegisterRequest request) {
+        var user = User.builder()
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .build();
 
-       user.setRoles(request.getRoles());
-       userRepository.save(user);
+        user.setRoles(request.getRoles());
+        userRepository.save(user);
     }
 
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
@@ -79,9 +76,9 @@ public class SecurityService {
                 .map(RefreshToken::getUserId)
                 .map(userId -> {
                     User tokenUser = userRepository.findById(userId).orElseThrow(
-                            () -> new RefreshTokenException("Exception of trying to get refresh token from userId: " + userId));
+                            () -> new RefreshTokenException(MessageFormat
+                                    .format("Exception of trying to get refresh token from userId: {0}", userId)));
                     String token = jwtUtils.generateTokenFromUsername(tokenUser.getUsername());
-
                     return new RefreshTokenResponse(token, refreshTokenService.save(userId).getToken());
                 }).orElseThrow(() -> new RefreshTokenException(refreshToken, "Refresh token not found"));
     }
@@ -94,5 +91,4 @@ public class SecurityService {
             refreshTokenService.deleteByUserId(userId);
         }
     }
-
 }
