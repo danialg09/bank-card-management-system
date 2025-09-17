@@ -5,6 +5,7 @@ import com.example.bankcards.dto.auth.RegisterRequest;
 import com.example.bankcards.exception.AlreadyExistsException;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +24,7 @@ public class AuthController {
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
+    public LoginResponse login(@RequestBody @Valid LoginRequest loginRequest) {
         return authService.authenticate(loginRequest);
     }
 
@@ -36,7 +37,7 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public SimpleResponse register(@RequestBody RegisterRequest registerRequest) {
+    public SimpleResponse register(@RequestBody @Valid RegisterRequest registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
             throw new AlreadyExistsException(
                     MessageFormat.format("Username: {0} already exists", registerRequest.getUsername())
@@ -54,7 +55,7 @@ public class AuthController {
 
     @PostMapping("/refresh-token")
     @ResponseStatus(HttpStatus.OK)
-    public RefreshTokenResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+    public RefreshTokenResponse refreshToken(@RequestBody @Valid RefreshTokenRequest refreshTokenRequest) {
         return authService.refreshToken(refreshTokenRequest);
     }
 
