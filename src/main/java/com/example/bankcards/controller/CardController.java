@@ -50,9 +50,15 @@ public class CardController {
         service.delete(id);
     }
 
-    @GetMapping("/{id}/balance")
+    @GetMapping("/balance/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public CardResponse balance(@PathVariable Long id, @AuthenticationPrincipal AppUserDetails userDetails) {
         return mapper.toCardResponse(service.getBalance(id, userDetails.getId()));
+    }
+
+    @GetMapping("/my-cards")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public List<CardResponse> myCards(@AuthenticationPrincipal AppUserDetails userDetails) {
+        return mapper.toCardResponses(service.getCards(userDetails.getId()));
     }
 }

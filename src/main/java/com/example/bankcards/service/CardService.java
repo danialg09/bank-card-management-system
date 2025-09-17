@@ -64,6 +64,10 @@ public class CardService {
         }
     }
 
+    public List<Card> getCards(Long userId) {
+        return cardRepository.findAllByOwnerId(userId);
+    }
+
     @Transactional
     public Card update(Long id, CardStatus status) {
         Card exist = findById(id);
