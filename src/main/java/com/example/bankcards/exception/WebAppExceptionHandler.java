@@ -38,6 +38,12 @@ public class WebAppExceptionHandler {
         return buildResponse(e);
     }
 
+    @ExceptionHandler(value = ExpiredException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponseBody expiredException(ExpiredException e) {
+        return buildResponse(e);
+    }
+
     private ErrorResponseBody buildResponse(Exception e) {
         return ErrorResponseBody.builder()
                         .message(e.getMessage())
