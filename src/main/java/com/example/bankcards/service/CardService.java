@@ -9,6 +9,7 @@ import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.util.CardUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,18 @@ public class CardService {
                 () -> new EntityNotFoundException(
                         MessageFormat.format("Card with ID: {0} not found", id))
         );
+    }
+
+    @Scheduled(cron = "0 0 0/4 * * ?")
+    public void expireCards() {
+        LocalDate today = LocalDate.now();
+        List<Card> expiredCards = cardRepository
+                .findByStatusAndExpirationDateBefore(CardStatus.ACTIVE, today);
+
+        for (Card card : expiredCards) {
+            card.setStatus(CardStatus.EXPIRED);
+        }
+        cardRepository.saveAll(expiredCards);
     }
 
     public Card create(Long userId) {
