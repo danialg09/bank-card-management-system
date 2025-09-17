@@ -1,5 +1,6 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.dto.transfer.TransferRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.exception.DifferentOwnerException;
@@ -20,18 +21,15 @@ public class TransferService {
     private final CardRepository cardRepository;
 
     @Transactional
-    public void transfer(Long userId, Long from, Long to, BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than zero");
-        }
-        Card fromCard = cardRepository.findById(from).orElseThrow(
+    public void transfer(Long userId, TransferRequest request) {
+        Card fromCard = cardRepository.findById(request.getFromCardId()).orElseThrow(
                 () -> new EntityNotFoundException(
-                        MessageFormat.format("Card with ID: {0} not found", from))
+                        MessageFormat.format("Card with ID: {0} not found", request.getFromCardId()))
         );
-        checkBalance(fromCard, amount);
-        Card toCard = cardRepository.findById(to).orElseThrow(
+        checkBalance(fromCard, request.getAmount());
+        Card toCard = cardRepository.findById(request.getToCardId()).orElseThrow(
                 () -> new EntityNotFoundException(
-                        MessageFormat.format("Card with ID: {0} not found", to))
+                        MessageFormat.format("Card with ID: {0} not found", request.getToCardId()))
         );
         checkStatus(fromCard);
         checkStatus(toCard);
@@ -42,8 +40,8 @@ public class TransferService {
         if (!toCard.getOwner().getId().equals(userId)) {
             throw new DifferentOwnerException("You cannot transfer to someone else's card");
         }
-        fromCard.setBalance(fromCard.getBalance().subtract(amount));
-        toCard.setBalance(toCard.getBalance().add(amount));
+        fromCard.setBalance(fromCard.getBalance().subtract(request.getAmount()));
+        toCard.setBalance(toCard.getBalance().add(request.getAmount()));
     }
 
     public void checkBalance(Card from, BigDecimal amount) {

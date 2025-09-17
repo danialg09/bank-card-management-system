@@ -5,6 +5,7 @@ import com.example.bankcards.dto.card.CardStatusRequest;
 import com.example.bankcards.mapper.CardMapper;
 import com.example.bankcards.security.AppUserDetails;
 import com.example.bankcards.service.CardService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,7 +41,7 @@ public class CardController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public CardResponse updateStatus(@PathVariable Long id, @RequestBody CardStatusRequest status) {
+    public CardResponse updateStatus(@PathVariable Long id, @RequestBody @Valid CardStatusRequest status) {
         return mapper.toCardResponse(service.update(id, status.getStatus()));
     }
 
