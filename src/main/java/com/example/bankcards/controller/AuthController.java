@@ -6,10 +6,12 @@ import com.example.bankcards.exception.AlreadyExistsException;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.text.MessageFormat;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -20,36 +22,49 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.authenticate(loginRequest));
+    @ResponseStatus(HttpStatus.OK)
+    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
+        return authService.authenticate(loginRequest);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<String> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok("Username : " + userDetails.getUsername() + "Role : " + userDetails.getAuthorities());
+    @ResponseStatus(HttpStatus.OK)
+    public String getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
+        return "Username : " + userDetails.getUsername()
+                + "Role : " + userDetails.getAuthorities();
     }
 
     @PostMapping("/register")
-    public ResponseEntity<SimpleResponse> register(@RequestBody RegisterRequest registerRequest) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public SimpleResponse register(@RequestBody RegisterRequest registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
-            throw new AlreadyExistsException("Username already exists");
+            throw new AlreadyExistsException(
+                    MessageFormat.format("Username: {0} already exists", registerRequest.getUsername())
+            );
         }
         if (userRepository.existsByEmail(registerRequest.getEmail())) {
-            throw new AlreadyExistsException("Email already exists");
+            throw new AlreadyExistsException(
+                    MessageFormat.format("Email: {0} already exists", registerRequest.getEmail())
+            );
         }
         authService.register(registerRequest);
 
-        return ResponseEntity.ok(new SimpleResponse("User registered successfully"));
+        return new SimpleResponse("User registered successfully");
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<RefreshTokenResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
-        return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest));
+    @ResponseStatus(HttpStatus.OK)
+    public RefreshTokenResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return authService.refreshToken(refreshTokenRequest);
     }
 
     @PostMapping("/log-out")
-    public ResponseEntity<SimpleResponse> logout(@AuthenticationPrincipal UserDetails userDetails) {
+    @ResponseStatus(HttpStatus.OK)
+    public SimpleResponse logout(@AuthenticationPrincipal UserDetails userDetails) {
         authService.logOut();
-        return ResponseEntity.ok(new SimpleResponse("Logged out successfully, username: " + userDetails.getUsername()));
+        return new SimpleResponse(
+                MessageFormat.format(
+                        "Logged out successfully, username: {0}",userDetails.getUsername())
+        );
     }
 }
