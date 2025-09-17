@@ -27,10 +27,22 @@ public class CardController {
         return mapper.toCardResponses(service.findAll());
     }
 
+    @GetMapping("/my-cards")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public List<CardResponse> myCards(@AuthenticationPrincipal AppUserDetails userDetails) {
+        return mapper.toCardResponses(service.getCards(userDetails.getId()));
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public CardResponse findById(@PathVariable Long id) {
         return mapper.toCardResponse(service.findById(id));
+    }
+
+    @GetMapping("/balance/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public CardResponse balance(@PathVariable Long id, @AuthenticationPrincipal AppUserDetails userDetails) {
+        return mapper.toCardResponse(service.getBalance(id, userDetails.getId()));
     }
 
     @PostMapping
@@ -49,17 +61,5 @@ public class CardController {
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteById(@PathVariable Long id) {
         service.delete(id);
-    }
-
-    @GetMapping("/balance/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public CardResponse balance(@PathVariable Long id, @AuthenticationPrincipal AppUserDetails userDetails) {
-        return mapper.toCardResponse(service.getBalance(id, userDetails.getId()));
-    }
-
-    @GetMapping("/my-cards")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    public List<CardResponse> myCards(@AuthenticationPrincipal AppUserDetails userDetails) {
-        return mapper.toCardResponses(service.getCards(userDetails.getId()));
     }
 }
