@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "cardNumber": "1234",
+    "ownerName": null,
+    "expirationDate": null,
+    "status": "ACTIVE",
+    "balance": 777.0
+  },
+  {
+    "id": 2,
+    "cardNumber": "4321",
+    "ownerName": null,
+    "expirationDate": null,
+    "status": "BLOCKED",
+    "balance": 10.0
+  }
+]
