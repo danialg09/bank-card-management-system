@@ -21,6 +21,6 @@ public class TransferRequest {
     @NotNull(message = "Target card ID must not be null")
     private Long toCardId;
 
-    @DecimalMin(value = "0.0", inclusive = false, message = "Transfer amount must be greater than 0")
+    @DecimalMin(value = "0.01", message = "Transfer amount must be at least 0.01")
     private BigDecimal amount;
 }
