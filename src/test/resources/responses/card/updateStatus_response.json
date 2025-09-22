@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "cardNumber": "1234",
+  "ownerName": null,
+  "expirationDate" : null,
+  "status": "BLOCKED",
+  "balance": 777.0
+}
