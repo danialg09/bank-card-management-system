@@ -1,5 +1,6 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.dto.card.CardRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
@@ -48,10 +49,10 @@ public class CardService {
         cardRepository.saveAll(expiredCards);
     }
 
-    public Card create(Long userId) {
-        User owner = userRepository.findById(userId).orElseThrow(
+    public Card create(CardRequest request) {
+        User owner = userRepository.findById(request.getOwnerId()).orElseThrow(
                 () -> new EntityNotFoundException(
-                        MessageFormat.format("User with ID: {0} not found", userId))
+                        MessageFormat.format("User with ID: {0} not found", request.getOwnerId()))
         );
         Card card = new Card();
         String cardNumber;

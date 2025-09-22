@@ -1,5 +1,6 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.card.CardRequest;
 import com.example.bankcards.dto.card.CardResponse;
 import com.example.bankcards.dto.card.CardStatusRequest;
 import com.example.bankcards.mapper.CardMapper;
@@ -47,8 +48,8 @@ public class CardController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public CardResponse create(@RequestParam Long ownerId) {
-        return mapper.toCardResponse(service.create(ownerId));
+    public CardResponse create(@RequestBody @Valid CardRequest request) {
+        return mapper.toCardResponse(service.create(request));
     }
 
     @PutMapping("/{id}")
