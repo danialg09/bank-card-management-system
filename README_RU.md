@@ -19,7 +19,7 @@
 
 ## ⚙️ Технологический стек
 
-- Backend: Java 17+, Spring Boot, Spring Data JPA, MapStruct, Validation
+- Backend: Java 21+, Spring Boot, Spring Data JPA, MapStruct, Validation
 - База данных: PostgreSQL
 - Кэширование: Redis
 - Безопасность: Spring Security, JWT
