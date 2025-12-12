@@ -9,7 +9,7 @@ spring:
     show-sql: true
     open-in-view: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/bank_db
+    url: jdbc:postgresql://localhost:5433/bank_db
     password: postgres
     username: postgres
   liquibase:

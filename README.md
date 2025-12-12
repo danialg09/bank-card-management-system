@@ -19,7 +19,7 @@ Bank Cards System is a backend solution for card management, transfers, and user
 
 ## ⚙️ Tech Stack
 
-- Backend: Java 17+, Spring Boot, Spring Data JPA, MapStruct, Validation
+- Backend: Java 21+, Spring Boot, Spring Data JPA, MapStruct, Validation
 - Database: PostgreSQL (main)
 - Caching: Redis
 - Security: Spring Security, JWT
