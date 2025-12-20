@@ -1,10 +1,13 @@
 openapi: 3.1.0
 info:
-  title: OpenAPI definition
-  version: v0
+  title: Bank System API
+  version: v1.0
+  description: "Bank Card Management System"
 servers:
   - url: http://localhost:8080
     description: Generated server url
+security:
+  - BearerAuth: [ ]
 paths:
   /api/cards/{id}:
     get:
@@ -68,24 +71,12 @@ paths:
       tags:
         - transfer-controller
       operationId: transferMoney
-      parameters:
-        - name: from
-          in: query
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: to
-          in: query
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: amount
-          in: query
-          required: true
-          schema:
-            type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferRequest'
       responses:
         '200':
           description: OK
@@ -107,18 +98,17 @@ paths:
       tags:
         - card-controller
       operationId: create
-      parameters:
-        - name: ownerId
-          in: query
-          required: true
-          schema:
-            type: integer
-            format: int64
+      requestBody: # Теперь используем Body вместо Query параметров
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardRequest'
       responses:
         '200':
-          description: OK
+          description: Карта успешно создана
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: '#/components/schemas/CardResponse'
   /api/auth/register:
@@ -126,6 +116,7 @@ paths:
       tags:
         - auth-controller
       operationId: register
+      security: []
       requestBody:
         required: true
         content:
@@ -162,6 +153,7 @@ paths:
       tags:
         - auth-controller
       operationId: login
+      security: []
       requestBody:
         required: true
         content:
@@ -284,7 +276,41 @@ paths:
               schema:
                 $ref: '#/components/schemas/UserResponse'
 components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
+    TransferRequest:
+      type: object
+      properties:
+        fromCardId:
+          type: integer
+          format: int64
+        toCardId:
+          type: integer
+          format: int64
+        amount:
+          type: number
+          format: double
+          example: 100.50
+    CardRequest:
+      type: object
+      required:
+        - ownerId
+      properties:
+        ownerId:
+          type: integer
+          format: int64
+        balance:
+          type: number
+          format: double
+          default: 0.0
+        expiryDate:
+          type: string
+          format: date
+          example: "2030-12-20"
     CardStatusRequest:
       type: object
       properties:
