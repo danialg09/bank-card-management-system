@@ -188,6 +188,17 @@ app:
 server:
   port: 8080
 ```
+## 🧪 Testing
+
+The project features a comprehensive testing suite (30+ tests) to ensure the stability of critical banking operations.
+
+* **Unit Testing:** Isolated business logic validation for services (`CardService`, `TransferService`, `AdminUserService`) using **Mockito**.
+* **Integration Testing:** API layer validation via **MockMvc** with simulated security contexts.
+* **Key Approaches:**
+    * **Base Abstract Classes:** Leveraging `AbstractControllerTest` to maintain clean and dry test code.
+    * **Resource-Based Assertions:** Using external JSON files to strictly validate API response contracts.
+    * **Advanced Assertions:** Utilizing **JsonUnit** for precise JSON structure comparison.
+
 # 🚀 Локальный запуск
 
 ## Требования
