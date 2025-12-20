@@ -20,7 +20,7 @@
 ## ⚙️ Технологический стек
 
 - Backend: Java 21+, Spring Boot, Spring Data JPA, MapStruct, Validation
-- База данных: PostgreSQL
+- База данных: PostgreSQL, Liquibase
 - Кэширование: Redis
 - Безопасность: Spring Security, JWT
 - DevOps: Docker, Docker Compose
@@ -163,7 +163,7 @@ spring:
       port: 6379
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate 
     show-sql: true
     open-in-view: false
   datasource:
@@ -225,7 +225,8 @@ http://localhost:8080
 http://localhost:8080/swagger-ui.html
 ```
 ## ⚡ Примечания
-- Все запросы используют DTO
-- Ролевой доступ обеспечивает разделение Admin/User
-- JWT аутентификация
-- Кэширование через Redis для ускорения запросов
+- Контроль структуры БД — миграции через Liquibase (отказ от hibernate ddl-auto) для безопасного обновления схемы без потери данных.
+- Интерактивная документация — полный контракт API в Swagger/OpenAPI с возможностью тестирования JWT-авторизации прямо из браузера.
+- Безопасность и роли — четкое разделение доступа (Admin/User) на уровне Spring Security + использование JWT (Access & Refresh tokens).
+- Производительность — оптимизация доступа к данным через кэширование в Redis.
+- Чистая архитектура — строгий обмен данными через DTO и валидация входящих запросов на уровне контроллеров.
