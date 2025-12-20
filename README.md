@@ -20,7 +20,7 @@ Bank Cards System is a backend solution for card management, transfers, and user
 ## ⚙️ Tech Stack
 
 - Backend: Java 21+, Spring Boot, Spring Data JPA, MapStruct, Validation
-- Database: PostgreSQL (main)
+- Database: PostgreSQL (main), Liquibase (migration management)
 - Caching: Redis
 - Security: Spring Security, JWT
 - DevOps: Docker, Docker Compose
@@ -162,7 +162,7 @@ spring:
       port: 6379
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate   # Changed from update to validate for safety
     show-sql: true
     open-in-view: false
   datasource:
@@ -172,7 +172,7 @@ spring:
   liquibase:
     change-log: classpath:db/migration/db.changelog-master.yml
     enabled: true
-    drop-first: true
+    # drop-first: true     # Use only for development!
 springdoc:
   api-docs:
     path: /api-docs
@@ -224,7 +224,8 @@ http://localhost:8080
 http://localhost:8080/swagger-ui.html
 ```
 ## ⚡ Notes
-- All requests use DTOs
-- Role-based access ensures Admin/User separation
-- JWT authentication
-- Redis caching for faster queries
+* **Database Migrations** — Managed via **Liquibase** for version control and schema safety (ensuring zero data loss, replacing unstable `hibernate ddl-auto`).
+* **API Documentation** — Fully documented via **OpenAPI (Swagger)** with built-in **JWT (Bearer Auth)** support for interactive testing.
+* **Performance Optimization** — High-speed data access powered by **Redis caching**.
+* **Security & RBAC** — Secure **JWT-based** authentication with strict **Admin/User** role separation via Spring Security.
+* **Robust Architecture** — Data exchange strictly via **DTOs** with comprehensive request validation.
