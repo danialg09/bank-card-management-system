@@ -3,10 +3,14 @@ package com.example.bankcards.security.jwt;
 
 import com.example.bankcards.security.AppUserDetails;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Date;
 
@@ -20,31 +24,38 @@ public class JwtUtils {
     @Value("${app.jwt.tokenExpiration}")
     private Duration tokenExpiration;
 
+    private SecretKey getSignInKey() {
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
+
     public String generateToken(AppUserDetails userDetails) {
         return generateTokenFromUsername(userDetails.getUsername());
     }
 
     public String generateTokenFromUsername(String username) {
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + tokenExpiration.toMillis()))
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .subject(username)
+                .issuedAt(new Date())
+                .expiration(new Date(new Date().getTime() + tokenExpiration.toMillis()))
+                .signWith(getSignInKey(), Jwts.SIG.HS512)
                 .compact();
-
     }
 
     public String getUserName(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody()
+                .verifyWith(getSignInKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
                 .getSubject();
     }
 
     public Boolean validateToken(String token) {
-        try{
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+        try {
+            Jwts.parser()
+                    .verifyWith(getSignInKey())
+                    .build()
+                    .parseSignedClaims(token);
             return true;
         } catch (SignatureException e) {
             log.error("Invalid JWT signature: {}", e.getMessage());
