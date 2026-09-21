@@ -8,10 +8,10 @@
         <version>3.5.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>bank_rest</artifactId>
+    <groupId>com.bank</groupId>
+    <artifactId>bank-card-management-system</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>bank_rest</name>
+    <name>bank-card-management-system</name>
     <description>Bank card management system</description>
     <url/>
     <licenses>
