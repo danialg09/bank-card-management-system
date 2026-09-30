@@ -7,6 +7,7 @@ import com.bank.dto.auth.RefreshTokenResponse;
 import com.bank.dto.auth.RegisterRequest;
 import com.bank.entity.RefreshToken;
 import com.bank.entity.User;
+import com.bank.event.UserRegisteredEvent;
 import com.bank.exception.RefreshTokenException;
 import com.bank.repository.UserRepository;
 import com.bank.security.AppUserDetails;
@@ -27,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final UserEventProducer userEventProducer;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
     private final RefreshTokenService refreshTokenService;
@@ -65,7 +67,13 @@ public class AuthService {
                 .build();
 
         user.setRoles(request.getRoles());
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        userEventProducer.send(new UserRegisteredEvent(
+                savedUser.getId(),
+                savedUser.getUsername(),
+                savedUser.getEmail()
+        ));
     }
 
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
