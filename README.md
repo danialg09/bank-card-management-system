@@ -1,4 +1,4 @@
-[Русская версия](README_RU.md)
+[Russian Version](README_RU.md)
 
 # 🏦 Bank Cards System
 
